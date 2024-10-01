@@ -33,29 +33,53 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
     // Validate country
     if (empty($_POST["country"])) {
-        $countryErr = "{'error': You must provide a Country !}";  
+        $countryErr = "{'error': You must provide a Country !}";
     } else {
         $country = test_input($_POST["country"]);
     }
 }
 
 // Helper function to sanitize inputs
-function test_input($data) {
+function test_input($data)
+{
     $data = trim($data);
     $data = stripslashes($data);
     $data = htmlspecialchars($data);
     return $data;
 }
 ?>
+<script>
+    function showCountryHint(str) {
+        if (str.length == 0) {
+            document.getElementById("countryHint").innerHTML = "";
+            return;
+        } else {
+            var xmlhttp = new XMLHttpRequest();
+            xmlhttp.onreadystatechange = function () {
+                if (this.readyState == 4 && this.status == 200) {
+                    document.getElementById("countryHint").innerHTML = this.responseText;
+                }
+            };
+            xmlhttp.open("GET", "getcountries.php?q=" + str, true);
+            xmlhttp.send();
+        }
+    }
 
+    function selectCountry(country) {
+        document.getElementById("country").value = country;
+        document.getElementById("countryHint").innerHTML = "";
+    }
+</script>
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" type="text/css" href="index2.css">
     <title>PHP Form Validation Example</title>
 </head>
+
 <body>
     <div class="container">
         <h2>PHP Form Validation Example</h2>
@@ -75,15 +99,19 @@ function test_input($data) {
 
             <div class="gender">
                 Gender:
-                <input type="radio" name="gender" value="Female" <?php if (isset($gender) && $gender == "Female") echo "checked"; ?>>Female
-                <input type="radio" name="gender" value="Male" <?php if (isset($gender) && $gender == "Male") echo "checked"; ?>>Male
-                <input type="radio" name="gender" value="Other" <?php if (isset($gender) && $gender == "Other") echo "checked"; ?>>Other
+                <input type="radio" name="gender" value="Female" <?php if (isset($gender) && $gender == "Female")
+                    echo "checked"; ?>>Female
+                <input type="radio" name="gender" value="Male" <?php if (isset($gender) && $gender == "Male")
+                    echo "checked"; ?>>Male
+                <input type="radio" name="gender" value="Other" <?php if (isset($gender) && $gender == "Other")
+                    echo "checked"; ?>>Other
                 <span class="error"> <?php echo $genderErr; ?></span>
                 <br><br>
             </div>
 
             <label for="country">Country:</label>
-            <input type="text" id="country" name="country" value="<?php echo $country; ?>" onkeyup="showCountryHint(this.value)">
+            <input type="text" id="country" name="country" placeholder="South East Asian Country"
+                onkeyup="showCountryHint(this.value)">
             <span class="error"> <?php echo $countryErr; ?></span>
             <p class="suggest">Suggestions: <span id="countryHint"></span></p>
 
@@ -104,27 +132,7 @@ function test_input($data) {
     }
     ?>
 
-    <script>
-        function showCountryHint(str) {
-            if (str.length == 0) {
-                document.getElementById("countryHint").innerHTML = "";
-                return;
-            } else {
-                var xmlhttp = new XMLHttpRequest();
-                xmlhttp.onreadystatechange = function () {
-                    if (this.readyState == 4 && this.status == 200) {
-                        document.getElementById("countryHint").innerHTML = this.responseText;
-                    }
-                };
-                xmlhttp.open("GET", "getcountries.php?q=" + str, true);
-                xmlhttp.send();
-            }
-        }
 
-        function selectCountry(country) {
-            document.getElementById("country").value = country;
-            document.getElementById("countryHint").innerHTML = ""; 
-        }
-    </script>
 </body>
+
 </html>
